@@ -5,7 +5,7 @@
     "main": "server.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 0",
-        "hello_extra": "node server.js && echo ’How are you’ ?"
+        "hello": "node server.js && echo 'Hello, how are you'"
     },
     "author": "Rohith Kumar",
     "license": "ISC",
