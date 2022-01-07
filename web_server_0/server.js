@@ -3,6 +3,12 @@
 const fs = require('fs')
 const dir = 'log'
 const fileName = 'log/server_log.log'
+const myModule = require('./myfirstmodule')
+
+console.log(myModule.myHello())
+console.log(myModule.myByebye())
+console.log(myModule.MPW)
+console.log(myModule.MAX_PIC_WIDTH)
 
 function logMsgSync (msg) {
     if (!fs.existsSync(dir)) {
