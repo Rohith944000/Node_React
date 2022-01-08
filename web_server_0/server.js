@@ -28,7 +28,7 @@ function logMsg (msg) {
     fs.stat(dir,
         (err) => {
             if (err == null) {
-                console.log('Folder exists')
+                console.log('Directory already exists')
             } else if (err.code === 'ENOENT') {
                 fs.mkdir(dir,
                     (err) => {
