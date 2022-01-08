@@ -3,7 +3,7 @@
 const fs = require('fs')
 const dir = 'log'
 const fileName = 'log/server_log.log'
-const myModule = require('./myfirstmodule')
+const myModule = require('./src/myfirstmodule')
 
 console.log(myModule.myHello())
 console.log(myModule.myByebye())
@@ -28,7 +28,7 @@ function logMsg (msg) {
     fs.stat(dir,
         (err) => {
             if (err == null) {
-                console.log('file exits')
+                console.log('Folder exists')
             } else if (err.code === 'ENOENT') {
                 fs.mkdir(dir,
                     (err) => {
