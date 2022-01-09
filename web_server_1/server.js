@@ -124,6 +124,43 @@ app.get('/seasons',function (req, res) {
 
 )
 
+const DB = require('./src/dao.js')
+//display list of customers
+app.get('/orders',
+    function(req,res){
+        DB.connect()
+        DB.query('SELECT * FROM orders',
+            function(result){
+                let html = ''
+                html += 'Number of Orders: ' + result.rowCount + '<br>'
+                html += '<table>'
+                for (let i = 0; i < result.rowCount; i++) {
+                    html += '<tr><td>' + result.rows[i].ordernumber + '</td>'
+                    html += '<td>' + result.rows[i].orderdate + '</td>'
+                    html += '<td>' + result.rows[i].requireddate + '</td>'
+                    html += '<td>' + result.rows[i].shippeddate + '</td>'
+                    html += '<td>' + result.rows[i].comments + '</td>'
+                    html += '<td>' + result.rows[i].status + '</td>'
+                    html += '<td>' + result.rows[i].customernumber + '</td></tr>'
+                }
+                html += '</table>'
+
+                // use the page template of course to display the list
+                const pageData = {} // initialize empty object
+                pageData.title = 'Order from classicmodels DB'
+                pageData.description = 'Order Details'
+                pageData.author = 'Rohith'
+                // send out the html table
+                pageData.content = html
+                res.render('master_template', pageData)
+                DB.disconnect()
+
+            }
+        )
+
+    }
+)
+
 //start server
 app.listen(8000, function(){
     console.log('Server listening to port 8000 using express')
