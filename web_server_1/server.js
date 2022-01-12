@@ -161,6 +161,73 @@ app.get('/orders',
     }
 )
 
+
+
+//customer search form
+app.get('/customer_search_form', function(req,res){
+    //dirname is a superglobal with current working directory
+    let filename = path.join(__dirname,'public_html','customer_search_form.html')
+    res.sendFile(filename)
+}
+)
+//Customer validate and display
+app.post('/customer_search_id',
+    function (request, response) {
+        // get the form inputs from the body of the HTTP request
+        console.log(request.body)
+        const customerId = request.body.customer_id
+        console.log('username=' + customerId)
+        // process form, validate data …
+        if (customerId === '' || customerId > 1000000) {
+            response.writeHead(400, { 'Content-Type': 'text/html' })
+            response.end('please enter valid customer id')
+        } else {
+            DB.connect()
+            DB.queryParams('select * from customers where customernumber = $1',[customerId],
+            function(result){
+                if(result.rowCount === 0){
+                    response.writeHead(400, { 'Content-Type': 'text/html' })
+                    response.end('customer not found')
+                }else{
+
+                    let html = ''
+                html += '<table>'
+                for (let i = 0; i < result.rowCount; i++) {
+                    html += '<tr><td>' + result.rows[i].customernumber + '</td>'
+                    html += '<td>' + result.rows[i].customername + '</td>'
+                    html += '<td>' + result.rows[i].contactlastname + '</td>'
+                    html += '<td>' + result.rows[i].contactfirstname + '</td>'
+                    html += '<td>' + result.rows[i].phone + '</td>'
+                    html += '<td>' + result.rows[i].addressline1 + '</td>'
+                    html += '<td>' + result.rows[i].addressline2 + '</td>'
+                    html += '<td>' + result.rows[i].city + '</td>'
+                    html += '<td>' + result.rows[i].state + '</td>'
+                    html += '<td>' + result.rows[i].postalcode + '</td>'
+                    html += '<td>' + result.rows[i].country + '</td>'
+                    html += '<td>' + result.rows[i].salesrepemployeenumber + '</td>'
+                    html += '<td>' + result.rows[i].creditlimit + '</td></tr>'
+                }
+                html += '</table>'
+
+                // use the page template of course to display the list
+                const pageData = {} // initialize empty object
+                pageData.title = 'Customer info'
+                pageData.description = 'Customer Details'
+                pageData.author = 'Rohith'
+                // send out the html table
+                pageData.content = html
+                response.render('master_template', pageData)
+                DB.disconnect()
+
+                }
+            }
+            )
+        }
+    }
+)
+
+
+
 //start server
 app.listen(8000, function(){
     console.log('Server listening to port 8000 using express')
