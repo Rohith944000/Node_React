@@ -175,7 +175,7 @@ app.post('/customer_search_id',
     function (request, response) {
         // get the form inputs from the body of the HTTP request
         console.log(request.body)
-        const customerId = request.body.customer_id
+        const customerId = request.body.id
         console.log('username=' + customerId)
         // process form, validate data …
         if (customerId === '' || customerId > 1000000) {
@@ -225,6 +225,52 @@ app.post('/customer_search_id',
         }
     }
 )
+
+
+// for AJAX tests, returns the list of customers in a JSON string
+app.get('/customers', function (request, response) {
+    let DB = require('./src/dao');
+    DB.connect();
+    DB.query('SELECT * from customers',function (customers){
+        const customersJSON={customers:customers.rows}
+        const customersJSONString = JSON.stringify(customersJSON, null, 4)
+        // set content type
+        response.writeHead(200, { 'Content-Type': 'application/json'})
+       // send out a string
+        response.end(customersJSONString)
+    })
+});
+app.get('/employees', function (request, response) {
+    let DB = require('./src/dao');
+    DB.connect();
+    DB.query('SELECT * FROM employees',function (employees){
+        const employeesJSON={employees:employees.rows}
+        const employeesJSONString = JSON.stringify(employeesJSON, null, 4)
+        // set content type
+        response.writeHead(200, { 'Content-Type': 'application/json'})
+       // send out a string
+        response.end(employeesJSONString)
+    })
+});
+
+// delete one customer
+// note you cannot delete customers with orders
+// to know customers that don't have an order run this query
+// SELECT * from customers
+// LEFT JOIN orders on customers.customernumber = orders.customernumber
+// WHERE ordernumber IS NULL
+// ORDER BY customers.customernumber ASC
+// result: you can delete customernumber 477,480,481 and others
+app.delete('/customers/:id', function (request, response) {
+    let id=request.params.id // read the :id value send in the URL
+    let DB = require('./src/dao');
+    DB.connect();
+    DB.queryParams('DELETE from customers WHERE customernumber=$1',[id],function (customers){
+        response.writeHead(200, { 'Content-Type': 'text/html'})
+       // send out a string
+        response.end("OK customer deleted")
+    })
+});
 
 
 
