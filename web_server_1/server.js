@@ -10,9 +10,14 @@
 // }).listen(8000)
 //console.log('server listening on port 8000')
 
-let express = require('express')
+const express = require('express')
 let app = express()
 const path = require('path') //use the path module
+
+// use CORS to allow AJAX requests from other web sites
+const cors = require('cors')
+app.use(cors())
+
 
 
 //serve static pages in /public_html directly, no processing required

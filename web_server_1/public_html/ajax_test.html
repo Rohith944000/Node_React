@@ -3,14 +3,15 @@
 
 <head>
     <title>AJAX test web page</title>
+    <style>
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+    </style>
+
 </head>
-<style>
-    table,
-    th,
-    td {
-        border: 1px solid black;
-    }
-</style>
 
 
 <body>
@@ -89,6 +90,8 @@
 
                         document.getElementById("response_data").innerHTML = html
                         console.log(customers)// show all on client console
+                    } else {
+                        document.getElementById("response_data").innerHTML = "No customers or error"
                     }
                 },
 
@@ -130,6 +133,7 @@
 
                         let html = ''
                         html += '<table>'
+                        html += '<tr><th>Number</th><th>Lastname</th><th>Firstname</th></tr>'
                         for (let i = 0; i < employees.length; i++) {
                             html += '<tr><td>' + employees[i].employeenumber + '</td>'
                             html += '<td>' + employees[i].lastname + '</td>'
