@@ -1,0 +1,19 @@
+GET http://localhost:8000/users HTTP/1.1
+
+###
+GET http://localhost:8000/users/100 HTTP/1.1
+
+###
+POST http://localhost:8000/users HTTP/1.1
+Content-Type: application/json
+
+{"id":888,"userName":"toto","age":26}
+
+###
+PUT http://localhost:8000/users/888 HTTP/1.1
+Content-Type: application/json
+
+{"userName":"Rohith","age":26}
+
+###
+DELETE http://localhost:8000/users/888 HTTP/1.1
