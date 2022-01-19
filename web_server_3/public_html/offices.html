@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+
+<head>
+    <title>Offices</title>
+    <style>
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+
+        .column {
+            float: left;
+            width: 6%;
+        }
+
+        /* Clear floats after the columns */
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    </style>
+
+</head>
+
+
+<body>
+    <div>
+        Server Message: <span id="response_data"></span>
+    </div>
+    <input style="border: 1px solid black;" type="number" id="input_id" name="input_id" min="1"
+        onchange="getOfficeById()"><br><br>
+
+    <div class="row">
+        <div class="column">officecode</div>
+        <div class="column"><input type="text" id="officecode" name="officecode"></div>
+    </div>
+    <div class="row">
+        <div class="column">city</div>
+        <div class="column"><input type="text" id="city" name="city"></div>
+    </div>
+    <div class="row">
+        <div class="column">phone</div>
+        <div class="column"><input type="text" id="phone" name="phone"></div>
+    </div>
+    <div class="row">
+        <div class="column">addressline1</div>
+        <div class="column"><input type="text" id="addressline1" name="addressline1"></div>
+    </div>
+    <div class="row">
+        <div class="column">addressline2</div>
+        <div class="column"><input type="text" id="addressline2" name="addressline2"></div>
+    </div>
+    <div class="row">
+        <div class="column">state</div>
+        <div class="column"><input type="text" id="state" name="state"></div>
+    </div>
+    <div class="row">
+        <div class="column">country</div>
+        <div class="column"><input type="text" id="country" name="country"></div>
+    </div>
+    <div class="row">
+        <div class="column">postalcode</div>
+        <div class="column"><input type="text" id="postalcode" name="postalcode"></div>
+    </div>
+    <div class="row">
+        <div class="column">territory</div>
+        <div class="column"><input type="text" id="territory" name="territory"></div>
+    </div><br>
+    <button style="margin-right: 1%;" onclick="UpdateOfficeTable()">Save</button>
+    <button style="margin-right: 1%;" onclick="OfficeDelete()">Delete</button>
+    <button style="margin-right: 1%;" onclick="ClearFormData()">clear form to add a new office</button><br>
+
+
+    <br><button onclick="getOffices()">Get all offices</button><br>
+    <br>
+    <div id="table_data"></div>
+
+</body>
+
+
+<script>
+    let clearData = false;
+
+    function getOffices() {
+
+        fetch("http://localhost:8000/offices",
+            {
+                method: 'GET',
+            }
+        )
+            .then((response) => {
+                document.getElementById("response_data").innerHTML = response.statusText
+                if (!response.ok) {
+                    // handle errors, response code other than 200 because
+                    return {} //empty object, no data
+                } else {
+                    //ok code 200, convert data in FETCH response to JSON data
+                    return response.json()
+                }
+                //execute second .then when done
+            })
+            .then(
+                //executes after the first .then
+                (data) => {// catch the data returned by first .then
+                    //check for not empty data object
+                    if (Object.keys(data).length !== 0) {
+                        // execute only when code is 200
+                        let offices = data.offices;
+
+                        //TO DO display all customters in a table
+
+                        let html = ''
+                        html += '<table>'
+                        for (let i = 0; i < offices.length; i++) {
+                            html += '<tr><td>' + offices[i].officecode + '</td>'
+                            html += '<td>' + offices[i].city + '</td>'
+                            html += '<td>' + offices[i].phone + '</td>'
+                            html += '<td>' + offices[i].addressline1 + '</td>'
+                            html += '<td>' + offices[i].addressline2 + '</td>'
+                            html += '<td>' + offices[i].state + '</td>'
+                            html += '<td>' + offices[i].country + '</td>'
+                            html += '<td>' + offices[i].postalcode + '</td>'
+                            html += '<td>' + offices[i].territory + '</td></tr>'
+                        }
+                        html += '</table>'
+
+                        document.getElementById("table_data").innerHTML = html
+
+                    }
+                },
+
+                (error) => {
+                    // only NO RESPONSE URL errors will trigger this code
+                    document.getElementById("response_data").innerHTML = "AJAX error: URL wrong or unreachable, see console"
+                }
+            )
+    }
+
+    function getOfficeById() {
+        ClearTables()
+        let UserInput = document.getElementById("input_id").value
+        let URL = 'http://localhost:8000/offices/' + UserInput
+
+
+        fetch(URL,
+            {
+                method: 'GET',
+            }
+        )
+            .then((response) => {
+                document.getElementById("response_data").innerHTML = response.statusText
+                if (!response.ok) {
+                    // handle errors, response code other than 200 because
+                    return {} //empty object, no data
+                } else {
+                    //ok code 200, convert data in FETCH response to JSON data
+                    return response.json()
+                }
+                //execute second .then when done
+            })
+            .then(
+                (data) => {// catch the data returned by first .then
+                    if (Object.keys(data).length !== 0) {
+                        let offices = data.offices;
+                        document.getElementById("officecode").value = offices[0].officecode
+                        document.getElementById("city").value = offices[0].city
+                        document.getElementById("phone").value = offices[0].phone
+                        document.getElementById("addressline1").value = offices[0].addressline1
+                        document.getElementById("addressline2").value = offices[0].addressline2
+                        document.getElementById("state").value = offices[0].state
+                        document.getElementById("country").value = offices[0].country
+                        document.getElementById("postalcode").value = offices[0].postalcode
+                        document.getElementById("territory").value = offices[0].territory
+
+                    }
+                },
+
+                (error) => {
+                    // only NO RESPONSE URL errors will trigger this code
+                    document.getElementById("response_data").innerHTML = "AJAX error: URL wrong or unreachable, see console"
+                }
+            )
+    }
+
+
+
+    //*****************************************************************
+    //send a POST request with data, equivalent to the form in form_post.html
+    function UpdateOfficeTable() {
+
+        if (document.getElementById("input_id").value !== "") {
+            let UserInput = document.getElementById("input_id").value
+            let URL = 'http://localhost:8000/offices/' + UserInput
+
+            let userData = {
+                officecode: document.getElementById("officecode").value,
+                city: document.getElementById("city").value,
+                phone: document.getElementById("phone").value,
+                addressline1: document.getElementById("addressline1").value,
+                addressline2: document.getElementById("addressline2").value,
+                state: document.getElementById("state").value,
+                country: document.getElementById("country").value,
+                postalcode: document.getElementById("postalcode").value,
+                territory: document.getElementById("territory").value
+            }
+
+            fetch(URL,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        // 'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: JSON.stringify(userData)
+                }
+            )
+
+                .then((response) => {
+                    // execute after we get the response from the server
+                    console.log(response)//show the whole FETCH response object on console
+                    document.getElementById("response_data").innerHTML = response.statusText
+                    if (!response.ok) {
+                        // handle response code other than 200 because
+                        return ""
+                    } else {
+                        //here server responds with text/html, get the text
+                        return response.text()
+                    }
+                    //execute second .then when done
+                })
+                .then(
+                    //executes after the first .then is complete
+                    (server_text) => {// catch what is returned from first .then
+                        // show text reply on page
+                        //document.getElementById("response_data").innerHTML = server_text
+                    },
+
+                    (error) => {
+                        // only NO RESPONSE URL errors will trigger this code
+                        document.getElementById("response_status").innerHTML = "AJAX error: URL wrong or unreachable, see console"
+                    }
+                )
+
+        } else {
+            InsertNewOffice()
+        }
+
+
+    }
+    function InsertNewOffice() {
+
+        let userData = {
+            officecode: document.getElementById("officecode").value,
+            city: document.getElementById("city").value,
+            phone: document.getElementById("phone").value,
+            addressline1: document.getElementById("addressline1").value,
+            addressline2: document.getElementById("addressline2").value,
+            state: document.getElementById("state").value,
+            country: document.getElementById("country").value,
+            postalcode: document.getElementById("postalcode").value,
+            territory: document.getElementById("territory").value
+        }
+
+        fetch("http://localhost:8000/offices",
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: JSON.stringify(userData)
+            }
+        )
+
+            .then((response) => {
+                // execute after we get the response from the server
+                console.log(response)//show the whole FETCH response object on console
+                document.getElementById("response_data").innerHTML = response.statusText
+                if (!response.ok) {
+                    // handle response code other than 200 because
+                    return ""
+                } else {
+                    //here server responds with text/html, get the text
+                    return response.text()
+                }
+                //execute second .then when done
+            })
+            .then(
+                //executes after the first .then is complete
+                (server_text) => {// catch what is returned from first .then
+                    // show text reply on page
+                    //document.getElementById("response_data").innerHTML = server_text
+                },
+
+                (error) => {
+                    // only NO RESPONSE URL errors will trigger this code
+                    document.getElementById("response_status").innerHTML = "AJAX error: URL wrong or unreachable, see console"
+                }
+            )
+
+    }
+
+    function ClearTables() {
+        document.getElementById("officecode").value = ""
+        document.getElementById("city").value = ""
+        document.getElementById("phone").value = ""
+        document.getElementById("addressline1").value = ""
+        document.getElementById("addressline2").value = ""
+        document.getElementById("state").value = ""
+        document.getElementById("country").value = ""
+        document.getElementById("postalcode").value = ""
+        document.getElementById("territory").value = ""
+
+    }
+
+    function OfficeDelete() {
+
+        let UserInput = document.getElementById("input_id").value
+        let URL = 'http://localhost:8000/offices/' + UserInput
+
+        fetch(URL,
+            {
+                method: 'DELETE'
+            }
+        )
+            .then((response) => {
+                document.getElementById("response_data").innerHTML = response.statusText
+                if (!response.ok) {
+                    // handle response code other than 200 because
+                    return ""
+                } else {
+                    //server responds with text/html, execute second .then when done
+                    return response.text()
+                }
+            })
+
+            .then(
+                (server_text) => {
+                    // show text reply on page
+                    //document.getElementById("response_data").innerHTML = server_text
+                },
+
+                (error) => {
+                    // only NO RESPONSE URL errors will trigger this code
+                    document.getElementById("response_status").innerHTML = "AJAX error: URL wrong or unreachable, see console"
+                }
+            )
+
+    }
+    function ClearFormData() {
+        ClearTables()
+        document.getElementById("input_id").value = ""
+    }
+
+</script>
+
+</html>
