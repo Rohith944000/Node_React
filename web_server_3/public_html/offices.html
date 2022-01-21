@@ -228,6 +228,7 @@
                     } else {
                         //here server responds with text/html, get the text
                         return response.text()
+
                     }
                     //execute second .then when done
                 })
@@ -333,6 +334,7 @@
                     return ""
                 } else {
                     //server responds with text/html, execute second .then when done
+                    ClearTables()
                     return response.text()
                 }
             })
