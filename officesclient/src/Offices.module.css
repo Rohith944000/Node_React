@@ -1,0 +1,20 @@
+.panel300 {
+    width: 400px;
+    background-color: darkgray;
+}
+
+.table {
+    border: 1px solid black;
+}
+
+.table th, .table td {
+    border: 1px solid black;
+}
+
+.error {
+    color: red;
+}
+
+.heading {
+    color: teal;
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from './Offices.module.css'
 
 /**
 * Dresses components
@@ -77,18 +78,31 @@ class Offices extends React.Component {
         )
     }
 
+    handleChange = (event)=>{
+        if(event.target.name === "next"){
+            if(this.state.offices_index < this.state.offices_count-1){
+                this.setState({offices_index:this.state.offices_index+1})
+            }
+        }else{
+            if(this.state.offices_index > 0){
+                this.setState({offices_index:this.state.offices_index-1})
+            }
+        }
 
-    // display the dresses table
+    }
+
+
+    // display the offices table
     render() {
         if(this.state.error){
             return <div><b>{this.state.error.message}</b></div>;
         }else if(this.state.isLoaded){
             if(this.state.offices_count!==0){
-                // dress table not empty
+                // office table not empty
                 return (
-                    <div>
-                        <b>List of Office from server localhost:8000/offices</b> <br/><br/>
-                        <table>
+                    <div className={styles.panel300}>
+                        <b className={styles.heading}>List of Office from server localhost:8000/offices</b> <br/><br/>
+                        <table className={styles.table}>
                             <tbody>
                             <tr><th>officecode</th><td>{this.state.offices_data[this.state.offices_index].officecode}</td></tr>
                             <tr><th>city</th><td>{this.state.offices_data[this.state.offices_index].city}</td></tr>
@@ -101,13 +115,16 @@ class Offices extends React.Component {
                             <tr><th>territory</th><td>{this.state.offices_data[this.state.offices_index].territory}</td></tr>
                             </tbody>
                         </table>
+                        <pre><button name="prev" onClick={(event)=>this.handleChange(event)} >Prev</button>
+                        <b>{this.state.offices_index + 1} OF {this.state.offices_count}</b>
+                        <button name="next" onClick={(event)=>this.handleChange(event)} >Next</button></pre>
                     </div>
                 )
             }else{
-                return(<div><b>Dress table is empty</b></div>)
+                return(<div className={styles.error}><b>Dress table is empty</b></div>)
             }
         }else{
-            return (<div><b>Waiting for server ...</b></div>)
+            return (<div className={styles.error} ><b>Waiting for server ...</b></div>)
         }
     }
   }
