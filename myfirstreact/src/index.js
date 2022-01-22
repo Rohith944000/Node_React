@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom'
 import './index.css'
 //import Nav from './Nav'
 import Footer from './Footer'
-import Header from './Header'
+//import Header from './Header'
 import SelectList from './SelectList'
 // import App from './App'
 import reportWebVitals from './reportWebVitals'
+import HeaderWithButton from './HeaderWithButton'
+import LoginForm from './LoginForm'
 
 const provinces=[ {code:'QC',name:'Quebec'},{code:'ON',name:'Ontario'},{code:'NB',name:'New-Brunswick'}]
 
@@ -16,10 +18,11 @@ class Page extends React.Component{
   render(){
             return (
             <div>
-                <Header companyName="blabla.com"/>
+                <HeaderWithButton companyName="blabla.com"/>
                 <p>Hello World !</p>
                 <SelectList array={provinces}/>
-                 <SelectList array={countries}/>
+                <SelectList array={countries}/>
+                <LoginForm username = "toto" pw = "12345678" />
                 <Footer author="Rohith"/>
             </div>
         )
