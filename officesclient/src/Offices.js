@@ -13,6 +13,8 @@ class Offices extends React.Component {
       // set initial state
       // do not use setState in constructor, write state directly
       this.state = {
+        dataCleared: false,
+        message : "",
         offices_data : [], // will contain dresses data array from server
         offices_index : 0, // the index of the dress currently shown, start at first in array
         offices_count : 0, // how many dresses in data array from server
@@ -37,7 +39,7 @@ class Offices extends React.Component {
                     // handle 2xx code success only
                     // get only JSON data returned from server with .json()
                     response.json().then(json_response => {
-                        console.log(json_response)
+                        //console.log(json_response)
                         this.setState({
                             offices_data:json_response.offices, // data received from server
                             offices_count:json_response.offices.length, // how many dresses in array
@@ -88,7 +90,90 @@ class Offices extends React.Component {
                 this.setState({offices_index:this.state.offices_index-1})
             }
         }
+        this.setState({dataCleared:false})
+    }
+    deleteOffice = (event)=>{
+        //this.setState({message:"deleted"})
 
+
+        let URL = 'http://localhost:8000/offices/' + this.state.offices_data[this.state.offices_index].officecode
+        //console.log(URL)
+
+        fetch(URL,
+            {
+                method: 'DELETE'
+            }
+        )
+        .then((response)=> {
+
+                if (response.ok) {
+                   this.setState({message:"Office deleted"})
+                   this.componentDidMount()
+
+                }else{
+                    this.setState({message:"Data not found"})
+            }
+        })
+    }
+
+    updateOfficeElement = (event)=>{
+        const officeIndex = this.state.offices_index
+        this.setState(state =>{
+            const list = state.offices_data.map((office,index) =>{
+                if(index === officeIndex){
+                office[event.target.name] = event.target.value
+                return office
+                }else{
+                    return office
+                }
+            })
+            return{
+                list,
+            }
+        })
+    }
+
+
+    updateOffice = ()=>{
+
+        let  URL = 'http://localhost:8000/offices/'
+
+        // let URL = 'http://localhost:8000/offices/' + this.state.offices_data[this.state.offices_index].officecode
+        // console.log(URL)
+
+        let officeInfo = this.state.offices_data[this.state.offices_index]
+        fetch(URL,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(officeInfo)
+            }
+        )
+
+            .then((response) => {
+                if (response.ok) {
+                    this.setState({message:"Office updated"})
+                    this.componentDidMount()
+
+                 }else{
+                     this.setState({message:"Please enter valid info"})
+             }
+            })
+
+
+    }
+    clearData=()=>{
+        document.getElementById("officecode").value=""
+        document.getElementById("city").value=""
+        document.getElementById("phone").value=""
+        document.getElementById("addressline1").value=""
+        document.getElementById("addressline2").value=""
+        document.getElementById("state").value=""
+        document.getElementById("country").value=""
+        document.getElementById("postalcode").value=""
+        document.getElementById("territory").value=""
     }
 
 
@@ -104,20 +189,25 @@ class Offices extends React.Component {
                         <b className={styles.heading}>List of Office from server localhost:8000/offices</b> <br/><br/>
                         <table className={styles.table}>
                             <tbody>
-                            <tr><th>officecode</th><td>{this.state.offices_data[this.state.offices_index].officecode}</td></tr>
-                            <tr><th>city</th><td>{this.state.offices_data[this.state.offices_index].city}</td></tr>
-                            <tr><th>phone</th><td>{this.state.offices_data[this.state.offices_index].phone}</td></tr>
-                            <tr><th>addressline1</th><td>{this.state.offices_data[this.state.offices_index].addressline1}</td></tr>
-                            <tr><th>addressline2</th><td>{this.state.offices_data[this.state.offices_index].addressline2}</td></tr>
-                            <tr><th>state</th><td>{this.state.offices_data[this.state.offices_index].state}</td></tr>
-                            <tr><th>country</th><td>{this.state.offices_data[this.state.offices_index].country}</td></tr>
-                            <tr><th>postalcode</th><td>{this.state.offices_data[this.state.offices_index].postalcode}</td></tr>
-                            <tr><th>territory</th><td>{this.state.offices_data[this.state.offices_index].territory}</td></tr>
+                            <tr><th>officecode</th><td><input type="number" id="officecode" name ="officecode" value={this.state.offices_data[this.state.offices_index].officecode} onChange={(event)=>this.updateOfficeElement(event)} /></td></tr>
+                            <tr><th>city</th><td><input type="text" id ="city" name="city" value={this.state.offices_data[this.state.offices_index].city} onChange={(event)=>this.updateOfficeElement(event)} /></td></tr>
+                            <tr><th>phone</th><td><input type="text" id ="phone" name="phone" value={this.state.offices_data[this.state.offices_index].phone} onChange={(event)=>this.updateOfficeElement(event)} /></td></tr>
+                            <tr><th>addressline1</th><td><input type="text" id ="addressline1" name="addressline1" value={this.state.offices_data[this.state.offices_index].addressline1} onChange={(event)=>this.updateOfficeElement(event)} /></td></tr>
+                            <tr><th>addressline2</th><td><input type="text" id ="addressline2" name="addressline2" value={this.state.offices_data[this.state.offices_index].addressline2} onChange={(event)=>this.updateOfficeElement(event)}/></td></tr>
+                            <tr><th>state</th><td><input type="text" id ="state" name="state" value={this.state.offices_data[this.state.offices_index].state} onChange={(event)=>this.updateOfficeElement(event)}/></td></tr>
+                            <tr><th>country</th><td><input type="text" id ="country" name="country" value={this.state.offices_data[this.state.offices_index].country} onChange={(event)=>this.updateOfficeElement(event)}/></td></tr>
+                            <tr><th>postalcode</th><td><input type="text" id ="postalcode" name="postalcode" value={this.state.offices_data[this.state.offices_index].postalcode} onChange={(event)=>this.updateOfficeElement(event)} /></td></tr>
+                            <tr><th>territory</th><td><input type="text" id ="territory" name="territory" value={this.state.offices_data[this.state.offices_index].territory}onChange={(event)=>this.updateOfficeElement(event)} /></td></tr>
                             </tbody>
                         </table>
-                        <pre><button name="prev" onClick={(event)=>this.handleChange(event)} >Prev</button>
-                        <b>{this.state.offices_index + 1} OF {this.state.offices_count}</b>
+                        <pre><button name="prev" style={{marginRight:"5px"}} onClick={(event)=>this.handleChange(event)} >Prev</button>
+                        <b style={{marginRight:"5px"}}>{this.state.offices_index + 1} OF {this.state.offices_count}</b>
                         <button name="next" onClick={(event)=>this.handleChange(event)} >Next</button></pre>
+                        <button name="save" style={{marginRight:"5px"}} onClick={()=>this.updateOffice()} >Save</button>
+                        <button name="Delete" style={{marginRight:"5px"}} onClick={(event)=>this.deleteOffice(event)} >Delete</button>
+                        <button name="clear"style={{marginRight:"5px"}} onClick={()=>this.clearData()} >Clear Data to add new form</button><br/>
+                        <b className={styles.message}>{this.state.message}</b><br/>
+
                     </div>
                 )
             }else{

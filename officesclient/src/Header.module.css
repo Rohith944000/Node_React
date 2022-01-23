@@ -1,0 +1,13 @@
+.header {
+    background-color: lightsalmon;
+    color: white;
+    height: 50px;
+}
+
+.p1 {
+    background-color: lightslategrey;
+}
+
+.button {
+    float: right;
+}

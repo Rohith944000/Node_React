@@ -56,9 +56,22 @@ app.post('/offices', function (request, response) {
     DB.connect()
     DB.queryParams('SELECT * FROM offices WHERE officecode = $1', [officecode], function (offices) {
         if (offices.rowCount === 1 || officecode === '') {
-            response.statusMessage = 'data already exists'
-            response.writeHead(403, { 'Content-Type': 'text/html' })
-            response.end('data already exists')
+            // response.statusMessage = 'data already exists'
+            // response.writeHead(403, { 'Content-Type': 'text/html' })
+            // response.end('data already exists')
+            DB.queryParams('Update offices set city = $2,phone=$3,addressline1=$4,addressline2=$5,state=$6,country=$7,postalcode=$8,territory=$9 where officecode = $1',
+                [officecode, city, phone, addressline1, addressline2, state, country, postalcode, territory], function (offices) {
+                    if (offices === 1) {
+                        response.statusMessage = 'Please enter valid data'
+                        response.writeHead(403, { 'Content-Type': 'text/html' })
+                        response.end('Please enter valid datas')
+                    } else {
+                        response.statusMessage = 'office updated'
+                        response.writeHead(200, { 'Content-Type': 'text/html' })
+                        // send out a string
+                        response.end('office updated')
+                    }
+                })
         } else {
             DB.queryParams('INSERT INTO offices (officecode,city,phone,addressline1,addressline2,state,country,postalcode,territory) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
                 [officecode, city, phone, addressline1, addressline2, state, country, postalcode, territory], function (offices) {

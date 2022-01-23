@@ -3,10 +3,14 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import Offices from './Offices.js'
+import HeaderWithButton from './HeaderWithButton'
+import Footer from './Footer'
 
 ReactDOM.render(
   <React.StrictMode>
+    <HeaderWithButton companyName="blabla.com" />
     <Offices />
+    <Footer author="Rohith"/>
   </React.StrictMode>,
   document.getElementById('root')
 );
