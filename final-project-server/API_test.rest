@@ -1,0 +1,15 @@
+GET http://localhost:8000/tracks HTTP/1.1
+
+###
+GET http://localhost:8000/playlists HTTP/1.1
+
+
+###
+POST http://localhost:8000/tracks HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+playlist_id=5&title=Shape of You - Ed Sheeran&uri='https://www.youtube.com/watch?v=JGwWNGJdvx8'&master_id=5412
+
+
+###
+DELETE http://localhost:8000/tracks/10 HTTP/1.1

@@ -133,7 +133,6 @@ class Offices extends React.Component {
         })
     }
 
-
     updateOffice = ()=>{
 
         let  URL = 'http://localhost:8000/offices/'
