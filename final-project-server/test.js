@@ -5,7 +5,7 @@ const app = express()
 
 const cors = require('cors')
 app.use(cors())
-app.use(express.static('public_html'))
+
 app.use(express.urlencoded())
 
 app.use(express.json())
@@ -27,7 +27,7 @@ app.get('/tracks', function (request, response) {
 app.get('/playlists', function (request, response) {
     const DB = require('./src/dao')
     DB.connect()
-    DB.query('select title, id from playlist order by id asc', function (playlist) {
+    DB.query('select title from playlist order by id asc', function (playlist) {
         const playlistJSON = { playlist: playlist.rows }
         const playlistJSONString = JSON.stringify(playlistJSON, null, 4)
         // set content type
@@ -45,23 +45,17 @@ app.post('/tracks', function (request, response) {
     const uri = request.body.uri
     const masterId = request.body.master_id
     DB.connect()
-    DB.queryParams('INSERT INTO track (playlist_id, title, uri, master_id) VALUES ($1,$2,$3,$4) RETURNING id',
+    DB.queryParams('INSERT INTO track (playlist_id, title, uri, master_id) VALUES ($1,$2,$3,$4)',
         [playlistId, title, uri, masterId], function (offices) {
-            // console.log(offices.rows[0].id)
             if (offices === 1) {
                 response.statusMessage = 'Please enter valid data'
                 response.writeHead(403, { 'Content-Type': 'text/html' })
                 response.end('Please enter valid data')
             } else {
                 response.statusMessage = 'track inserted'
-                response.status(200)
-                // response.writeHead(200, { 'Content-Type': 'text/html' })
+                response.writeHead(200, { 'Content-Type': 'text/html' })
                 // send out a string
-                // response.end('track inserted')
-                response.json({
-                    status: 'Success',
-                    id: offices.rows[0].id
-                })
+                response.end('track inserted')
             }
         })
 })
@@ -79,12 +73,9 @@ app.delete('/tracks/:id', function (request, response) {
         } else {
             DB.queryParams('DELETE from track WHERE id = $1', [id], function (tracks) {
                 response.statusMessage = 'track deleted'
-                // response.writeHead(200, { 'Content-Type': 'text/html' })
+                response.writeHead(200, { 'Content-Type': 'text/html' })
                 // send out a string
-                // response.end('track deleted')
-                response.status(200).json({
-                    status: 'Success'
-                })
+                response.end('track deleted')
             })
         }
     })
